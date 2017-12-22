@@ -1,0 +1,21 @@
+{% extends 'my_master.html' %}
+{% block body %}
+{{ super() }}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h1>Admin Panel</h1>
+            <p>
+                Manage users and resources here.
+            </p>
+            {% if not current_user.is_authenticated %}
+            <p>
+                Please log in to continue.
+            <p>
+                <a class="btn btn-primary" href="{{ url_for('security.login') }}">Login</a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock body %}
