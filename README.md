@@ -8,6 +8,14 @@ Ensure you have the following installed locally:
 
 ## Setup
 
+Create a `virtualenv` via the regular cli or `mkvirtualenv`. (Find it [here](https://virtualenvwrapper.readthedocs.io/en/latest/))
+
+Install requirements by running:
+
+```bash
+pip install -r requirements.txt
+```
+
 Fill out all config variables in `app/config.py`. 
 
 Replace `lol` with meaningful, secure values.
