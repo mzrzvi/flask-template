@@ -27,7 +27,7 @@ def get_profile(user_id):
     if not user:
         return responses.user_not_found()
 
-    return jsonify(user.to_dict()), status.OK
+    return jsonify(user.public_dict()), status.OK
 
 
 @app.route('/api/users/me', methods=['GET'])
@@ -109,4 +109,4 @@ def delete_profile():
     db.session.delete(user)
     db.session.commit()
 
-    return responses.user_deleted()
+    return responses.resource_deleted('User')

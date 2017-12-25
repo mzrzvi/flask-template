@@ -37,6 +37,16 @@ def action_forbidden():
     }), status.FORBIDDEN
 
 
+def unauthorized():
+    """
+    Handles case when user is unauthorized to complete action
+    :return:
+    """
+    return jsonify({
+        'error': 'Not authorized'
+    }), status.UNAUTHORIZED
+
+
 def invalid_user_type(user_type):
     """
     Handles invalid user types
@@ -78,6 +88,18 @@ def user_created(jwt_token, refresh_token):
         'app_refresh_token': refresh_token,
         'message': 'User created successfully!'
     }), status.CREATED
+
+
+def user_updated(password_changed=False):
+    """
+    Handles case when a user account is updated successfully
+    :return: a json with one key value pair of message and success string message, and a
+    created (201) status
+    """
+    return jsonify({
+        'message': 'User updated successfully' +
+                   (' and password changed' if password_changed else '')
+    }), status.OK
 
 
 def user_logged_in(jwt_token, refresh_token):
@@ -123,41 +145,40 @@ def user_token_refreshed(jwt_token, refresh_token):
         'app_access_token': jwt_token,
         'app_refresh_token': refresh_token,
         'message': 'Token refreshed!'
-    }), status.CREATED
-
-
-def user_deleted():
-    """
-    Handles case when a user is deleted successfully
-    :return: a json with one key value pair of message and success message string, and a
-    OK (200) status
-    """
-    return jsonify({
-        'message': 'User deleted successfully!'
     }), status.OK
 
 
-def server_error(e):
+def resource_created(resource_name):
     """
-    Handles case when the server has an internal error
-    :return: a json with one key value pair of message and error message string, and a
-    Internal server error (500) status
-    """
-    return jsonify({
-        'error': 'Internal server error: {}'.format(e)
-    }), status.INTERNAL_SERVER_ERROR
-
-
-def user_updated(password_changed=False):
-    """
-    Handles case when a user account is updated successfully
+    Handles case when a resource is created successfully
     :return: a json with one key value pair of message and success string message, and a
     created (201) status
     """
     return jsonify({
-        'message': 'User updated successfully' +
-                   (' and password changed' if password_changed else '')
+        'message': '{} created successfully'.format(resource_name)
     }), status.CREATED
+
+
+def resource_updated(resource_name):
+    """
+    Handles case when a resource is updated successfully
+    :return: a json with one key value pair of message and success string message, and a
+    created (201) status
+    """
+    return jsonify({
+        'message': '{} updated successfully'.format(resource_name)
+    }), status.OK
+
+
+def resource_deleted(resource_name):
+    """
+    Handles case when a resource is deleted successfully
+    :return: a json with one key value pair of message and success message string, and a
+    OK (200) status
+    """
+    return jsonify({
+        'message': '{} deleted successfully!'.format(resource_name)
+    }), status.OK
 
 
 def items_not_found():
@@ -169,3 +190,14 @@ def items_not_found():
     return jsonify({
         'message': 'No items were found!'
     }), status.NOT_FOUND
+
+
+def server_error(e):
+    """
+    Handles case when the server has an internal error
+    :return: a json with one key value pair of message and error message string, and a
+    Internal server error (500) status
+    """
+    return jsonify({
+        'error': 'Internal server error: {}'.format(e)
+    }), status.INTERNAL_SERVER_ERROR

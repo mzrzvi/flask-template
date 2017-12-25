@@ -40,8 +40,8 @@ class BaseUser(db.Model, UserMixin):
 
     first_name = db.Column(db.Text)
     last_name = db.Column(db.Text)
-    email = db.Column(db.Text, unique=True)
-    password = db.Column(db.Text)
+    email = db.Column(db.Text, unique=True, nullable=False)
+    password = db.Column(db.Text, nullable=False)
     phone_number = db.Column(db.Text, unique=True)
 
     active = db.Column(db.Boolean)
@@ -78,7 +78,6 @@ class BaseUser(db.Model, UserMixin):
         self.facebook_access_token = data.get('facebook_access_token')
 
         self.created_at = datetime.now()
-        self.updated_at = datetime.now()
 
     def change_password(self, old_password, new_password):
         """
@@ -86,11 +85,10 @@ class BaseUser(db.Model, UserMixin):
         If old password is incorrect returns False
         :return: True if password was successfully changed else False
         """
-
         if not verify_password(old_password, self.password):
             return False
 
-        self.password = hash_password(password=new_password)
+        self.password = hash_password(new_password)
 
         db.session.commit()
 
@@ -98,7 +96,7 @@ class BaseUser(db.Model, UserMixin):
 
     def to_dict(self):
         """
-        Serializes data into dictionary for API responses
+        Serializes user's data into dictionary for API response
         :return:
         """
         return {
@@ -107,6 +105,17 @@ class BaseUser(db.Model, UserMixin):
             'last_name': self.last_name,
             'email': self.email,
             'phone_number': self.phone_number,
+            'type': self.type
+        }
+
+    def public_dict(self):
+        """
+        Serialize user's data into dictionary to be exposed publicly
+        :return:
+        """
+        return {
+            'first_name': self.first_name,
+            'last_name': self.last_name,
             'type': self.type
         }
 
@@ -122,14 +131,18 @@ class AdminUser(BaseUser):
     }
 
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        return 'Admin: {first_name} {last_name}'.format(first_name=self.first_name,
+                                                        last_name=self.last_name)
 
 
 class ExampleUser(BaseUser):
     """
-    For clients using the app
+    Example user inheriting from BaseUser class above
+    Owns many Resource A's while a Resource A is only associated with one ExampleUser
     """
     id = db.Column(db.Text, db.ForeignKey('base_user.id'), primary_key=True)
+
+    resource_a_set = db.relationship('ResourceA', backref='owner', lazy=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'example_user',
@@ -139,4 +152,5 @@ class ExampleUser(BaseUser):
         super(ExampleUser, self).__init__(**data)
 
     def __str__(self):
-        return self.first_name + ' ' + self.last_name
+        return 'Example User: {first_name} {last_name}'.format(first_name=self.first_name,
+                                                               last_name=self.last_name)

@@ -26,6 +26,11 @@ def configure_admin(_app):
         ExampleUser
     )
 
+    from app.resources.models import (
+        ResourceA,
+        ResourceB
+    )
+
     # Create admin
     _admin = Admin(
         _app,
@@ -36,6 +41,9 @@ def configure_admin(_app):
 
     _admin.add_view(AuthModelView(AdminUser, db.session))
     _admin.add_view(CustomModelView(ExampleUser, db.session))
+
+    _admin.add_view(AuthModelView(ResourceA, db.session))
+    _admin.add_view(AuthModelView(ResourceB, db.session))
 
     return _admin
 

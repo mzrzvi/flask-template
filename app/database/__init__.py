@@ -4,14 +4,12 @@ Initializes database
 
 # pylint: disable=invalid-name,no-member
 
-from flask_security.utils import hash_password
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from app import app
 
 db = SQLAlchemy(app)
-db.init_app(app)
 
 migrate = Migrate(app, db)
 

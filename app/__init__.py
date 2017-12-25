@@ -19,6 +19,7 @@ from app.admin import routes as admin_routes
 from app.auth.email import routes as auth_routes
 from app.auth.facebook import routes as fb_routes
 from app.users import routes as user_routes
+from app.resources import routes as resource_routes
 from app.security import security as app_security
 
 
