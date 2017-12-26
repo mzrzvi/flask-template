@@ -2,8 +2,8 @@
 Run script for application
 """
 
-from app import get_app
-from app.database import clean_db
+from app_name import get_app
+from app_name.database import clean_db
 
 if __name__ == '__main__':
     app = get_app()

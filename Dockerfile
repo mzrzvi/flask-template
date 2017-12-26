@@ -1,10 +1,10 @@
 # Use an official Python runtime as a parent image
 FROM python:3
 
-# Set the working directory to /app
+# Set the working directory to /app_name
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy the current directory contents into the container at /app_name
 ADD . /app
 
 # Install any needed packages specified in requirements.txt
