@@ -7,6 +7,10 @@ All user models
 import uuid
 from datetime import datetime
 
+from .constants import BASE_USER, ADMIN, EXAMPLE_USER
+
+from sqlalchemy.sql.expression import and_
+
 from flask_security import UserMixin, RoleMixin
 from flask_security.utils import hash_password, verify_password
 
@@ -62,7 +66,7 @@ class BaseUser(db.Model, UserMixin):
                             cascade="all,delete")
 
     __mapper_args__ = {
-        'polymorphic_identity': 'base_user',
+        'polymorphic_identity': BASE_USER,
         'polymorphic_on': type
     }
 
@@ -119,6 +123,26 @@ class BaseUser(db.Model, UserMixin):
             'type': self.type
         }
 
+    @classmethod
+    def get_user_by_attrs(cls, get_all=False, **attrs):
+        """
+        Filters users by provided attributes
+        Provided attributes must be in BaseUser class
+        :param get_all: bool
+        :param attrs: dict
+        :return: user
+        """
+        if not all(attr in cls.__dict__ for attr in attrs):
+            return None
+
+        filters = []
+        for attr, value in attrs.items():
+            filters.append(eval('{}.{}'.format(cls.__name__, attr)) == value)
+
+        query = cls.query.filter(and_(*filters))
+
+        return query.all() if get_all else query.first()
+
 
 class AdminUser(BaseUser):
     """
@@ -127,7 +151,7 @@ class AdminUser(BaseUser):
     id = db.Column(db.Text, db.ForeignKey('base_user.id'), primary_key=True)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'admin',
+        'polymorphic_identity': ADMIN,
     }
 
     def __str__(self):
@@ -145,11 +169,13 @@ class ExampleUser(BaseUser):
     resource_a_set = db.relationship('ResourceA', backref='owner', lazy=True)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'example_user',
+        'polymorphic_identity': EXAMPLE_USER,
     }
 
     def __init__(self, **data):
         super(ExampleUser, self).__init__(**data)
+
+        self.resource_a_set = data.get('resource_a_set')
 
     def __str__(self):
         return 'Example User: {first_name} {last_name}'.format(first_name=self.first_name,

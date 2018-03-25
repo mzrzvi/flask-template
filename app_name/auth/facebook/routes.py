@@ -5,27 +5,27 @@ Facebook auth routes
 # pylint: disable=no-member,invalid-name
 
 from flask import request
-
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token
 )
 
+from . import helpers as fb
+
 from app_name import app
 
-from app_name.auth.helpers import confirm_email
-from app_name.auth.facebook import helpers as fb
+from app_name.auth.email.helpers import confirm_email
 
 from app_name.database import db
 
-from app_name.util import responses
-from app_name.util.exceptions import protect_500
-
 from app_name.users.helpers import (
     get_user_type,
-    get_user_by_fb_id,
+    get_user_by_attrs,
     get_admin_user_type
 )
+
+from app_name.util import responses
+from app_name.util.exceptions import protect_500
 
 
 @app.route('/signup/facebook', methods=['POST'])
@@ -132,7 +132,7 @@ def login_facebook():
     # get user id to look up in database?
     facebook_user_id = token_info.get('user_id')
 
-    user = get_user_by_fb_id(facebook_user_id)
+    user = get_user_by_attrs(facebook_user_id=facebook_user_id)
 
     if user is None:
         return responses.user_not_found()

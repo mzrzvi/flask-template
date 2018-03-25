@@ -5,30 +5,26 @@ All authentication endpoints used in the app
 # pylint: disable=no-member,invalid-name
 
 from flask import request
-
-from flask_security.utils import verify_password
-
 from flask_jwt_extended import (
     create_access_token,
     get_jwt_identity,
     jwt_refresh_token_required,
     create_refresh_token
 )
+from flask_security.utils import verify_password
+
+from .helpers import confirm_email
 
 from app_name import app
-
 from app_name.database import db
+from app_name.users.helpers import (
+    get_user_type,
+    get_admin_user_type
+)
+from app_name.users.models import BaseUser
 
 from app_name.util import responses
 from app_name.util.exceptions import protect_500
-
-from app_name.auth.helpers import confirm_email
-
-from app_name.users.helpers import (
-    get_user_type,
-    get_user_by_email,
-    get_admin_user_type
-)
 
 
 @app.route('/login/email', methods=['POST'])
@@ -48,7 +44,7 @@ def login():
     if not all([email, password]):
         return responses.missing_params()
 
-    user = get_user_by_email(email)
+    user = BaseUser.get_user_by_attrs(email=email)
 
     if user is None:
         return responses.user_not_found()
@@ -87,6 +83,7 @@ def signup_email():
     if UserType is None:
         return responses.invalid_user_type(user_type)
 
+    # Only allow admin creation in admin panel
     if UserType is get_admin_user_type():
         return responses.action_forbidden()
 

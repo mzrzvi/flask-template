@@ -7,8 +7,9 @@ Tests for User classes
 import json
 import unittest
 
+from .models import AdminUser
+
 from app_name.testing import AppTest
-from app_name.users.models import AdminUser
 
 
 class AdminUserTest(AppTest):

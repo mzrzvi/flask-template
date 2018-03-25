@@ -5,6 +5,8 @@ from flask import request, jsonify
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from .helpers import get_user_by_attrs
+
 from app_name import app
 
 from app_name.database import db
@@ -12,17 +14,15 @@ from app_name.database import db
 from app_name.util import status, responses
 from app_name.util.exceptions import protect_500
 
-from app_name.users.helpers import get_user_by_id
-
 
 @app.route('/api/users/<user_id>', methods=['GET'])
 @protect_500
-def get_profile(user_id):
+def get_public_profile(user_id):
     """
     Returns user's profile information based on user_id provided
     :return:
     """
-    user = get_user_by_id(user_id)
+    user = get_user_by_attrs(id=user_id)
 
     if not user:
         return responses.user_not_found()
@@ -39,7 +39,7 @@ def get_my_profile():
     :return:
     """
     user_id = get_jwt_identity()
-    user = get_user_by_id(user_id)
+    user = get_user_by_attrs(id=user_id)
 
     if not user:
         return responses.user_not_found()
@@ -68,7 +68,7 @@ def update_profile():
         return responses.invalid_request_keys(set(update_attrs) - valid_attrs)
 
     user_id = get_jwt_identity()
-    user = get_user_by_id(user_id)
+    user = get_user_by_attrs(id=user_id)
 
     if not user:
         return responses.user_not_found()
@@ -101,7 +101,7 @@ def delete_profile():
     """
     user_id = get_jwt_identity()
 
-    user = get_user_by_id(user_id)
+    user = get_user_by_attrs(id=user_id)
 
     if not user:
         return responses.user_not_found()
@@ -109,4 +109,4 @@ def delete_profile():
     db.session.delete(user)
     db.session.commit()
 
-    return responses.resource_deleted('User')
+    return responses.resource_deleted(user.__class__.__name__)

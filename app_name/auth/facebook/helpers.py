@@ -30,7 +30,8 @@ def get_access_token(app_id, app_secret):
 
     if response.get('access_token'):
         return response.get('access_token')
-    elif 'error' in response:
+
+    if 'error' in response:
         raise FBAuthException(response.get('error').get('message'))
 
 
@@ -53,7 +54,8 @@ def debug_user_token(user_token, access_token):
 
     if 'data' in response:
         return response.get('data')
-    elif 'error' in response:
+
+    if 'error' in response:
         raise FBAuthException(response.get('error').get('message'))
 
 

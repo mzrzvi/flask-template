@@ -3,19 +3,16 @@ Routes for this resource group module
 """
 
 from flask import request, jsonify
-
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app_name import app
-
 from app_name.database import db
-
+from app_name.security.permissions import check_permission
+from app_name.security.constants import CREATE
+from app_name.users.helpers import get_user_by_attrs
 from app_name.util import status, responses
 from app_name.util.exceptions import protect_500
-
-from app_name.users.helpers import get_user_by_id
-
-from app_name.resources.models import ResourceA
+from .models import ResourceA
 
 
 @app.route('/api/resource-a', methods=['POST'])
@@ -27,9 +24,12 @@ def create_resource_a():
     :return:
     """
     user_id = get_jwt_identity()
-    user = get_user_by_id(user_id)
+    user = get_user_by_attrs(id=user_id)
 
-    if user.type != 'example_user':
+    if not user:
+        return responses.user_not_found()
+
+    if not check_permission(user.type, CREATE, ResourceA.__name__):
         return responses.action_forbidden()
 
     data = request.get_json()
@@ -41,7 +41,7 @@ def create_resource_a():
     db.session.add(resource_a)
     db.session.commit()
 
-    return responses.resource_created('Resource A')
+    return responses.resource_created(ResourceA.__name__)
 
 
 @app.route('/api/resource-a', methods=['GET'])
@@ -63,7 +63,10 @@ def get_resource_a(resource_a_id):
     Returns current user's profile information
     :return:
     """
-    resource_a = ResourceA.query.get_or_404(resource_a_id)
+    resource_a = ResourceA.query.get(resource_a_id)
+
+    if not resource_a:
+        return responses.resource_not_found(ResourceA.__name__)
 
     return jsonify(resource_a.to_dict()), status.OK
 
@@ -77,7 +80,10 @@ def update_resource_a(resource_a_id):
     Can also change password
     :return:
     """
-    resource_a = ResourceA.query.get_or_404(resource_a_id)
+    resource_a = ResourceA.query.get(resource_a_id)
+
+    if not resource_a:
+        return responses.resource_not_found(ResourceA.__name__)
 
     user_id = get_jwt_identity()
 
@@ -99,7 +105,7 @@ def update_resource_a(resource_a_id):
 
     db.session.commit()
 
-    return responses.resource_updated('Resource A')
+    return responses.resource_updated(ResourceA.__name__)
 
 
 @app.route('/api/resource-a/<resource_a_id>', methods=['DELETE'])
@@ -110,7 +116,10 @@ def delete_resource_a(resource_a_id):
     Deletes requester's account
     :return:
     """
-    resource_a = ResourceA.query.get_or_404(resource_a_id)
+    resource_a = ResourceA.query.get(resource_a_id)
+
+    if not resource_a:
+        return responses.resource_not_found(ResourceA.__name__)
 
     user_id = get_jwt_identity()
 
@@ -120,4 +129,4 @@ def delete_resource_a(resource_a_id):
     db.session.delete(resource_a)
     db.session.commit()
 
-    return responses.resource_deleted('Resource A')
+    return responses.resource_deleted(ResourceA.__name__)

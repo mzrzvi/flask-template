@@ -32,7 +32,7 @@ class ResourceA(db.Model):
         self.created_at = datetime.now()
 
     def __str__(self):
-        return "Resource A: {name}".format(name=self.name)
+        return 'Resource A: {name}'.format(name=self.name)
 
     def to_dict(self):
         """
@@ -65,4 +65,4 @@ class ResourceB(db.Model):
         self.created_at = datetime.now()
 
     def __str__(self):
-        return "Resource B: {name}".format(name=self.name)
+        return 'Resource B: {name}'.format(name=self.name)

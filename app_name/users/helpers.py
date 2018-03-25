@@ -1,15 +1,19 @@
 """
 Helper functions for the Users module
 """
-from app_name.users.models import (
+from sqlalchemy.sql.expression import and_
+
+from .models import (
     BaseUser,
     AdminUser,
     ExampleUser
 )
 
-_USER_ROLES = {
-    'AdminUser': AdminUser,
-    'ExampleUser': ExampleUser
+from .constants import ADMIN, EXAMPLE_USER
+
+USER_TYPES = {
+    ADMIN: AdminUser,
+    EXAMPLE_USER: ExampleUser
 }
 
 
@@ -25,12 +29,12 @@ def get_user_type(user_type: str) -> type(BaseUser):
     # type: (str) -> type(BaseUser)
     """
     Helper function for getting the correct User object in routes
-    Will return None if the user type is not in the dict _USER_ROLES
+    Will return None if the user type is not in the dict USER_TYPES
     :rtype: object
     :param user_type: a str with the corresponding user type
     :return: the corresponding user db.Model object or None
     """
-    return _USER_ROLES.get(user_type)
+    return USER_TYPES.get(user_type)
 
 
 def get_all_user_types():
@@ -38,18 +42,18 @@ def get_all_user_types():
     Returns all user type classes
     :return:
     """
-    return [AdminUser, ExampleUser]
+    return USER_TYPES.values()
 
 
-def get_user_by_email(email):
+def get_user_by_attrs(get_all=False, **attrs):
     """
-    Finds user by email across all types
-    Returns None if not found
-    :param email:
-    :return:
+    Filters users by provided attributes
+    Provided attributes must be in BaseUser class
+    :param kwargs: dict()
+    :return: user
     """
     for UserType in get_all_user_types():
-        user = UserType.query.filter_by(email=email).first()
+        user = UserType.get_user_by_attrs(get_all, **attrs)
         if user is not None:
             return user
 
@@ -63,18 +67,5 @@ def get_user_by_id(user_id):
     """
     for UserType in get_all_user_types():
         user = UserType.query.get(user_id)
-        if user is not None:
-            return user
-
-
-def get_user_by_fb_id(fb_id):
-    """
-    Finds user by FB user id across all types
-    Returns None if not found
-    :param fb_id:
-    :return:
-    """
-    for UserType in get_all_user_types():
-        user = UserType.query.filter_by(facebook_user_id=fb_id).first()
         if user is not None:
             return user

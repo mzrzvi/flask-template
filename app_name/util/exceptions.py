@@ -5,7 +5,7 @@ import traceback
 
 from functools import wraps
 
-from app_name.util import responses
+from . import responses
 
 
 class FBAuthException(Exception):

@@ -1,3 +1,7 @@
+"""
+Superclass for tests
+"""
+
 from flask_testing import TestCase
 
 from app_name import app

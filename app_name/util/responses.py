@@ -3,7 +3,7 @@ Commonly used responses
 """
 from flask import jsonify
 
-from app_name.util import status
+from . import status
 
 
 def invalid_request_keys(invalid_keys):
@@ -181,14 +181,14 @@ def resource_deleted(resource_name):
     }), status.OK
 
 
-def items_not_found():
+def resource_not_found(resource_name):
     """
-    Handles case when an endpoint is trying to find items based on some query and nothing
-    was returned
-    :return: (404) status and an error message
+    Handles case when a resource is not found
+    :return: a json with one key value pair of message and error message string, and a
+    (404) status
     """
     return jsonify({
-        'message': 'No items were found!'
+        'message': '{} not found!'.format(resource_name)
     }), status.NOT_FOUND
 
 
