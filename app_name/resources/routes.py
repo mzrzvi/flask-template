@@ -53,7 +53,9 @@ def get_all_resource_a():
     """
     resource_a_set = ResourceA.query.all()
 
-    return jsonify([resource_a.to_dict() for resource_a in resource_a_set]), status.OK
+    return jsonify({
+        'items': [resource_a.to_dict() for resource_a in resource_a_set]
+    }), status.OK
 
 
 @app.route('/api/resource-a/<resource_a_id>', methods=['GET'])

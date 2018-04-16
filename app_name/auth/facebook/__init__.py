@@ -1,11 +1,10 @@
 """
 Facebook auth module
 """
-from flask_oauth import OAuth
 
 from app_name import app
+from app_name.auth import oauth
 
-oauth = OAuth()
 oauth_settings = {
     'name': 'facebook',
     'base_url': 'https://graph.facebook.com/',

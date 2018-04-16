@@ -22,7 +22,7 @@ Replace `lol` with meaningful, secure values.
 
 Replace the `sqlite://*.db` files with your actual database URI's.
 
-## Local
+### Local
 
 To start server locally, execute: 
 
@@ -32,7 +32,7 @@ python3 run.py
 
 The app will assume you're running local configurations if you haven't set your `ENVIRONMENT` variable
 
-## Development
+### Development
 
 Export the `ENVIRONMENT` environment variable:
 
@@ -48,7 +48,7 @@ python3 run.py
 
 The server will run on port `5000`.
 
-## Production
+### Production
 
 Export the `ENVIRONMENT` environment variable:
 
@@ -63,3 +63,12 @@ python3 run.py
 ```
 
 The server will run on port `80`.
+
+
+## Known Issues
+
+* Facebook OAuth is done manually/with raw requests for now. Would like to migrate functionality to a trusted and maintained package.
+
+## Todos
+
+* Migrate OAuth setup to [Flask-Dance](https://github.com/singingwolfboy/flask-dance)
