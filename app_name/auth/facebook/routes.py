@@ -18,11 +18,7 @@ from app_name.auth.email.helpers import confirm_email
 
 from app_name.database import db
 
-from app_name.users.helpers import (
-    get_user_type,
-    get_user_by_attrs,
-    get_admin_user_type
-)
+from app_name.users.models import User
 
 from app_name.util import responses
 from app_name.util.exceptions import protect_500
@@ -46,14 +42,6 @@ def signup_facebook():
     if not all([user_token, user_type]):
         return responses.missing_params()
 
-    UserType = get_user_type(user_type)
-
-    if UserType is None:
-        return responses.invalid_user_type(user_type)
-
-    if UserType is get_admin_user_type():
-        return responses.action_forbidden()
-
     # Get the access token again?
     access_token = fb.get_access_token(
         app_id=app.config.get('FACEBOOK_APP_ID'),
@@ -70,16 +58,17 @@ def signup_facebook():
 
     # check that the user does not exist already in the database
     user_exists = db.session.query(
-        db.exists().where(UserType.email == fb_user_info.get('email'))).scalar()
+        db.exists().where(User.email == fb_user_info.get('email'))).scalar()
 
     if user_exists:
         return responses.user_already_exists()
 
-    user = UserType(first_name=fb_user_info.get('first_name'),
-                last_name=fb_user_info.get('last_name'),
-                email=fb_user_info.get('email'),
-                facebook_user_id=fb_user_id
-                )
+    user = User(
+        first_name=fb_user_info.get('first_name'),
+        last_name=fb_user_info.get('last_name'),
+        email=fb_user_info.get('email'),
+        facebook_user_id=fb_user_id
+    )
 
     db.session.add(user)
     db.session.commit()
@@ -132,7 +121,7 @@ def login_facebook():
     # get user id to look up in database?
     facebook_user_id = token_info.get('user_id')
 
-    user = get_user_by_attrs(facebook_user_id=facebook_user_id)
+    user = User.query.filter_by(facebook_user_id=facebook_user_id)
 
     if user is None:
         return responses.user_not_found()

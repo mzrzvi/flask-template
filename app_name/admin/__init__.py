@@ -21,10 +21,7 @@ def configure_admin(_app):
     :param _app:
     :return: Flask Admin instance
     """
-    from app_name.users.models import (
-        AdminUser,
-        ExampleUser
-    )
+    from app_name.users.models import User
 
     from app_name.resources.models import (
         ResourceA,
@@ -39,8 +36,7 @@ def configure_admin(_app):
         template_mode='bootstrap3'
     )
 
-    _admin.add_view(AuthModelView(AdminUser, db.session))
-    _admin.add_view(CustomModelView(ExampleUser, db.session))
+    _admin.add_view(AuthModelView(User, db.session))
 
     _admin.add_view(AuthModelView(ResourceA, db.session))
     _admin.add_view(AuthModelView(ResourceB, db.session))

@@ -15,10 +15,10 @@ class ResourceA(db.Model):
     All Resource A's can be viewed by anyone -- signed-in user or not
     Only resources you own can be edited by you, however
     """
-    id = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
 
-    owner_id = db.Column(db.Text, db.ForeignKey('example_user.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     resource_b_set = db.relationship('ResourceB', backref='resourceA')
 
@@ -50,10 +50,10 @@ class ResourceB(db.Model):
     Example resource used to demonstrate one-to-many relationships
     Associated with one Resource A and does not own any resources
     """
-    id = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
 
-    resource_a_id = db.Column(db.Text, db.ForeignKey('resourceA.id'), nullable=False)
+    resource_a_id = db.Column(db.Integer, db.ForeignKey('resourceA.id'), nullable=False)
 
     created_at = db.Column(db.DateTime)
     updated_at = db.Column(db.DateTime)

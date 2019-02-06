@@ -30,6 +30,10 @@ class Config(object):
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL') \
+        or os.getenv('SQLALCHEMY_DATABASE_URI') \
+        or 'sqlite:///local.db'
+
     SUPERUSER_EMAIL = 'lol'
 
     FACEBOOK_APP_ID = 'lol'
@@ -43,7 +47,7 @@ class Config(object):
     MAIL_USERNAME = ''
     MAIL_PASSWORD = ''
 
-    DEFAULT_USER_TYPE = 'ExampleUser'
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', None)
 
 
 class ProductionConfig(Config):
@@ -58,8 +62,6 @@ class ProductionConfig(Config):
     SECURITY_PASSWORD_SALT = 'lol'
 
     SUPERUSER_PASSWORD = 'lol'
-
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///prod.db'
 
     PORT = 80
 
@@ -77,8 +79,6 @@ class DevelopmentConfig(Config):
 
     SUPERUSER_PASSWORD = 'lol'
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///dev.db'
-
     PORT = 5000
 
 
@@ -91,8 +91,6 @@ class LocalConfig(DevelopmentConfig):
     SUPERUSER_PASSWORD = 'lol'
 
     HOST = 'http://0.0.0.0'
-
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///local.db'
 
 
 class TestingConfig(DevelopmentConfig):
@@ -114,11 +112,13 @@ CONFIGS = {
 }
 
 
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'LOCAL')
+
+
 def get_config():
     """
     Gets the config type set by environment variable
     :return: config object
     """
 
-    config_type = os.getenv('ENVIRONMENT', 'LOCAL')
-    return 'app_name.config.' + CONFIGS.get(config_type)
+    return 'app_name.config.' + CONFIGS.get(ENVIRONMENT)

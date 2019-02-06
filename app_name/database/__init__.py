@@ -18,7 +18,9 @@ def clean_db():
     """
     Initializes clean database
     """
-    from app_name.users.models import Role, AdminUser, ExampleUser        # pylint: disable=cyclic-import
+    print('Cleaning database...')
+
+    from app_name.users.models import User, Role        # pylint: disable=cyclic-import
 
     db.reflect()
     db.drop_all()
@@ -37,28 +39,19 @@ def clean_db():
             db.session.add(super_user_role)
             db.session.commit()
 
-        super_user = AdminUser.query.filter_by(email=app.config['SUPERUSER_EMAIL']).first()
+        super_user = User.query.filter_by(email=app.config['SUPERUSER_EMAIL']).first()
         if not super_user:
-            super_user = AdminUser(
+            super_user = User(
                 first_name='Admin',
                 last_name='User',
                 email=app.config['SUPERUSER_EMAIL'],
                 password=app.config['SUPERUSER_PASSWORD'],
                 roles=[user_role, super_user_role],
-                is_active=True
+                is_active=True,
+                is_admin=True
             )
 
             db.session.add(super_user)
             db.session.commit()
 
-        example_user = ExampleUser(
-            first_name='John',
-            last_name='Smith',
-            email='john.smith@example.com',
-            password='password',
-            roles=[user_role],
-            is_active=True
-        )
-
-        db.session.add(example_user)
-        db.session.commit()
+    print('Cleaned database.')

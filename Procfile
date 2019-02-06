@@ -1,1 +1,1 @@
-web: python3 run.py
+web: gunicorn app_name:app --timeout 60 --workers 3

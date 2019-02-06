@@ -103,14 +103,8 @@ def get_user_info(user_id, access_token):
     :return: dict
     """
     endpoint = '/v2.11/' + user_id
-
-    params = {
-        'fields': 'first_name,last_name,email'
-    }
-
-    headers = {
-        'Authorization': 'Bearer ' + access_token
-    }
+    params = {'fields': 'first_name,last_name,email'}
+    headers = {'Authorization': 'Bearer ' + access_token}
 
     url = constants.FB_GRAPH_API_URL + endpoint
     response = requests.get(url, params=params, headers=headers).json()

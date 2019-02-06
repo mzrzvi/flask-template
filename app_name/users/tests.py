@@ -7,14 +7,14 @@ Tests for User classes
 import json
 import unittest
 
-from .models import AdminUser
+from .models import User
 
 from app_name.testing import AppTest
 
 
-class AdminUserTest(AppTest):
-    def test_admin_user1(self):
-        user = AdminUser(
+class UserTest(AppTest):
+    def test_create_user1(self):
+        user = User(
             first_name='John',
             last_name='Smith',
             email='john.smith@example.com',
@@ -24,23 +24,12 @@ class AdminUserTest(AppTest):
 
         self.db.session.add(user)
 
-        q_user = AdminUser.query.filter_by(first_name='John').first()
+        q_user = User.query.filter_by(first_name='John').first()
 
         self.assertEqual(user, q_user)
 
-    def test_email_signup(self):
-        response = self.client.post('/signup/email', data=json.dumps({
-            'email': 'me@johndoe.com',
-            'password': 'pass12345',
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'user_type': 'AdminUser'
-        }), content_type='application/json', follow_redirects=True)
 
-        self.assert_status(response, 403)
-
-
-class ExampleUserTest(AppTest):
+class UserAPITest(AppTest):
     def test_signup(self):
         response = self.client.post('/signup/email', data=json.dumps({
             'email': 'me@johndoe.com',
@@ -62,7 +51,7 @@ class ExampleUserTest(AppTest):
         self.assert_status(signup_response, 201)
 
         delete_response = self.client.delete(
-            '/api/users/me',
+            '/users/me',
             content_type='application/json',
             follow_redirects=True,
             headers={'Authorization': 'Bearer {}'.format(signup_response.json['app_access_token'])}
@@ -81,7 +70,7 @@ class ExampleUserTest(AppTest):
         self.assert_status(signup_response, 201)
 
         update_response = self.client.put(
-            '/api/users/me',
+            '/users/me',
             data=json.dumps({
                 'first_name': 'Johhny',
                 'last_name': 'Doee',
@@ -110,6 +99,7 @@ class ExampleUserTest(AppTest):
         }), content_type='application/json', follow_redirects=True)
 
         self.assertStatus(login_response, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

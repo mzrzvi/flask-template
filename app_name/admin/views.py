@@ -9,21 +9,23 @@ from flask import (
     url_for,
     redirect,
     abort,
-    flash
+    flash,
+    request
 )
-
-from flask import request
 
 from flask_admin import BaseView
 from flask_admin.babel import gettext
 from flask_admin.contrib.sqla import ModelView
+
 from flask_security import current_user
+
 from wtforms.compat import iteritems
 
-from app_name.users.models import AdminUser
 
 # Set up logger
 log = logging.getLogger("flask-admin.sqla")
+
+RESOURCE_PAGE_SIZE = 100
 
 
 # Create customized model view class
@@ -32,9 +34,7 @@ class AuthModelView(ModelView):
     Super class for model views requiring auth
     """
     def is_accessible(self):
-        user = current_user._get_current_object()           # pylint: disable=protected-access
-
-        return isinstance(user, AdminUser)
+        return current_user.is_authenticated and current_user.is_admin
 
     def _handle_view(self, name, **kwargs):
         """
@@ -47,6 +47,23 @@ class AuthModelView(ModelView):
             else:
                 # login
                 return redirect(url_for('security.login', next=request.url))
+
+    def _get_list_extra_args(self):
+        args = super()._get_list_extra_args()
+
+        args.extra_args['max'] = RESOURCE_PAGE_SIZE
+        self.page_size = RESOURCE_PAGE_SIZE
+
+        return args
+
+
+class SearchableModelView(AuthModelView):
+    """
+    Endorsements page searchable
+    """
+    def __init__(self, *args, searchable_attrs, **kwargs):
+        self.column_searchable_list = searchable_attrs
+        super(SearchableModelView, self).__init__(*args, **kwargs)
 
 
 class CustomModelView(AuthModelView):
@@ -104,9 +121,7 @@ class AuthBaseView(BaseView):
     Super class for views requiring auth
     """
     def is_accessible(self):
-        user = current_user._get_current_object()           # pylint: disable=protected-access
-
-        return isinstance(user, AdminUser)
+        return current_user.is_authenticated and current_user.is_admin
 
     def _handle_view(self, name, **kwargs):
         """

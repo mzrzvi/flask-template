@@ -7,30 +7,10 @@ Tests for User classes
 import unittest
 import json
 
-from flask_testing import TestCase
-
-from app_name.database import db
-
-from app_name import app
+from app_name.testing import AppTest
 
 
-class RefreshTokenTests(TestCase):
-    def create_app(self):
-        self.app = app
-        self.app.config.from_object('app_name.config.TestingConfig')
-        self.app.testing = True
-        self.client = app.test_client()
-
-        return self.app
-
-    def setUp(self):
-        self.db = db
-        self.db.create_all()
-
-    def tearDown(self):
-        self.db.session.remove()
-        self.db.drop_all()
-
+class RefreshTokenTests(AppTest):
     def test_refresh_token(self):
         signup_response = self.client.post('/signup/email', data=json.dumps({
             'email': 'me@johndoe.com',
@@ -39,11 +19,11 @@ class RefreshTokenTests(TestCase):
             'last_name': 'Doe'
         }), content_type='application/json', follow_redirects=True)
 
-        refresh_response = self.client.post('/refresh',
-                                            follow_redirects=True,
-                                            headers={'authorization': 'Bearer {}'.format(
-                                                signup_response.json['app_refresh_token'])}
-                                            )
+        refresh_response = self.client.post(
+            '/auth/refresh',
+            follow_redirects=True,
+            headers={'Authorization': 'Bearer {}'.format(signup_response.json['app_refresh_token'])}
+        )
 
         self.assertStatus(refresh_response, 201)
 

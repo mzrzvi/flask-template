@@ -5,17 +5,19 @@ Routes for this resource group module
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from app_name import app
-from app_name.database import db
-from app_name.security.permissions import check_permission
-from app_name.security.constants import CREATE
-from app_name.users.helpers import get_user_by_attrs
-from app_name.util import status, responses
-from app_name.util.exceptions import protect_500
 from .models import ResourceA
 
+from app_name import app
 
-@app.route('/api/resource-a', methods=['POST'])
+from app_name.database import db
+
+from app_name.users.models import User
+
+from app_name.util import status, responses
+from app_name.util.exceptions import protect_500
+
+
+@app.route('/resource-a', methods=['POST'])
 @protect_500
 @jwt_required
 def create_resource_a():
@@ -24,13 +26,10 @@ def create_resource_a():
     :return:
     """
     user_id = get_jwt_identity()
-    user = get_user_by_attrs(id=user_id)
+    user = User.query.get(user_id)
 
     if not user:
         return responses.user_not_found()
-
-    if not check_permission(user.type, CREATE, ResourceA.__name__):
-        return responses.action_forbidden()
 
     data = request.get_json()
     resource_a = ResourceA(**data)
@@ -44,7 +43,7 @@ def create_resource_a():
     return responses.resource_created(ResourceA.__name__)
 
 
-@app.route('/api/resource-a', methods=['GET'])
+@app.route('/resource-a', methods=['GET'])
 @protect_500
 def get_all_resource_a():
     """
@@ -58,7 +57,7 @@ def get_all_resource_a():
     }), status.OK
 
 
-@app.route('/api/resource-a/<resource_a_id>', methods=['GET'])
+@app.route('/resource-a/<resource_a_id>', methods=['GET'])
 @protect_500
 def get_resource_a(resource_a_id):
     """
@@ -73,7 +72,7 @@ def get_resource_a(resource_a_id):
     return jsonify(resource_a.to_dict()), status.OK
 
 
-@app.route('/api/resource-a/<resource_a_id>', methods=['PUT'])
+@app.route('/resource-a/<resource_a_id>', methods=['PUT'])
 @protect_500
 @jwt_required
 def update_resource_a(resource_a_id):
@@ -110,7 +109,7 @@ def update_resource_a(resource_a_id):
     return responses.resource_updated(ResourceA.__name__)
 
 
-@app.route('/api/resource-a/<resource_a_id>', methods=['DELETE'])
+@app.route('/resource-a/<resource_a_id>', methods=['DELETE'])
 @protect_500
 @jwt_required
 def delete_resource_a(resource_a_id):

@@ -6,8 +6,8 @@ Initialize user module
 
 from flask_security import SQLAlchemyUserDatastore
 
-from .models import BaseUser, Role
+from .models import User, Role
 
 from app_name.database import db
 
-datastore = SQLAlchemyUserDatastore(db, BaseUser, Role)
+datastore = SQLAlchemyUserDatastore(db, User, Role)

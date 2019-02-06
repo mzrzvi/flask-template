@@ -23,7 +23,7 @@ def missing_params():
     :return:
     """
     return jsonify({
-        'error': 'Missing required params'
+        'error': 'Missing required parameters'
     }), status.BAD_REQUEST
 
 
@@ -64,8 +64,28 @@ def invalid_fb_token():
     :return:
     """
     return jsonify({
-        'error': 'Invalid facebook user token'
+        'error': 'Invalid Facebook user token'
     }), status.BAD_REQUEST
+
+
+def invalid_google_token():
+    """
+    Handles case when user's FB token doesn't validate
+    :return:
+    """
+    return jsonify({
+        'error': 'Invalid Google user token'
+    }), status.BAD_REQUEST
+
+
+def async_task_started(task_name):
+    """
+    What to return when you've started an async task
+    :return:
+    """
+    return jsonify({
+        'message': '{} task started'.format(task_name)
+    }), status.OK
 
 
 def invalid_password():
@@ -74,7 +94,7 @@ def invalid_password():
     :return:
     """
     return jsonify({
-        "error": "Invalid password"
+        'error': 'Invalid password'
     }), status.BAD_REQUEST
 
 
@@ -102,7 +122,7 @@ def user_updated(password_changed=False):
     }), status.OK
 
 
-def user_logged_in(jwt_token, refresh_token):
+def user_logged_in(jwt_token, refresh_token, user_id, user_info=None):
     """
     Handles case when user logs in
     :return:
@@ -110,6 +130,8 @@ def user_logged_in(jwt_token, refresh_token):
     return jsonify({
         'app_access_token': jwt_token,
         'app_refresh_token': refresh_token,
+        'user_id': user_id,
+        'user_info': user_info,
         'message': 'User logged in successfully!'
     }), status.OK
 
@@ -121,7 +143,7 @@ def user_already_exists():
     """
     return jsonify({
         'error': 'A user with that email already exists!'
-    }), status.BAD_REQUEST
+    }), status.CONFLICT
 
 
 def user_not_found():
@@ -134,16 +156,14 @@ def user_not_found():
     }), status.NOT_FOUND
 
 
-def user_token_refreshed(jwt_token, refresh_token):
+def user_token_refreshed(jwt_token):
     """
     Handles case when user refreshes token
     :param jwt_token:
-    :param refresh_token:
     :return:
     """
     return jsonify({
         'app_access_token': jwt_token,
-        'app_refresh_token': refresh_token,
         'message': 'Token refreshed!'
     }), status.OK
 
