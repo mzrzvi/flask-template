@@ -2,7 +2,6 @@
 Example models for an example resource group
 """
 
-import uuid
 from datetime import datetime
 
 from app_name.database import db
@@ -26,7 +25,6 @@ class ResourceA(db.Model):
     updated_at = db.Column(db.DateTime)
 
     def __init__(self, **data):
-        self.id = str(uuid.uuid4())
         self.name = data.get('name')
 
         self.created_at = datetime.now()
@@ -59,7 +57,6 @@ class ResourceB(db.Model):
     updated_at = db.Column(db.DateTime)
 
     def __init__(self, **data):
-        self.id = str(uuid.uuid4())
         self.name = data.get('name')
 
         self.created_at = datetime.now()

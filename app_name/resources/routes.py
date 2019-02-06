@@ -22,7 +22,7 @@ from app_name.util.exceptions import protect_500
 @jwt_required
 def create_resource_a():
     """
-    Returns current user's profile information
+    Creates a resource A
     :return:
     """
     user_id = get_jwt_identity()
@@ -47,7 +47,7 @@ def create_resource_a():
 @protect_500
 def get_all_resource_a():
     """
-    Returns current user's profile information
+    Returns all resource A's
     :return:
     """
     resource_a_set = ResourceA.query.all()
@@ -61,7 +61,7 @@ def get_all_resource_a():
 @protect_500
 def get_resource_a(resource_a_id):
     """
-    Returns current user's profile information
+    Returns resource's information
     :return:
     """
     resource_a = ResourceA.query.get(resource_a_id)
@@ -77,8 +77,7 @@ def get_resource_a(resource_a_id):
 @jwt_required
 def update_resource_a(resource_a_id):
     """
-    Updates the user's profile based on attributes and values sent
-    Can also change password
+    Updates resource A details
     :return:
     """
     resource_a = ResourceA.query.get(resource_a_id)
@@ -114,7 +113,7 @@ def update_resource_a(resource_a_id):
 @jwt_required
 def delete_resource_a(resource_a_id):
     """
-    Deletes requester's account
+    Deletes resource A
     :return:
     """
     resource_a = ResourceA.query.get(resource_a_id)
