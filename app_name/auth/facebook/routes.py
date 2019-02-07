@@ -24,7 +24,7 @@ from app_name.util import responses
 from app_name.util.exceptions import protect_500
 
 
-@app.route('/signup/facebook', methods=['POST'])
+@app.route('/auth/signup/facebook', methods=['POST'])
 @protect_500
 def signup_facebook():
     """
@@ -83,7 +83,7 @@ def signup_facebook():
 
 
 
-@app.route('/login/facebook', methods=['POST'])
+@app.route('/auth/login/facebook', methods=['POST'])
 @protect_500
 def login_facebook():
     """

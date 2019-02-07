@@ -23,7 +23,7 @@ from app_name.util import responses
 from app_name.util.exceptions import protect_500
 
 
-@app.route('/login/email', methods=['POST'])
+@app.route('/auth/login/email', methods=['POST'])
 @protect_500
 def login():
     """
@@ -38,7 +38,7 @@ def login():
     if not all([email, password]):
         return responses.missing_params()
 
-    user = User.query.filter_by(email=email)
+    user = User.query.filter_by(email=email).first()
 
     if user is None:
         return responses.user_not_found()
@@ -52,7 +52,7 @@ def login():
     return responses.user_logged_in(jwt_token, refresh_token, user.id)
 
 
-@app.route('/signup/email', methods=['POST'])
+@app.route('/auth/signup/email', methods=['POST'])
 @protect_500
 def signup_email():
     """

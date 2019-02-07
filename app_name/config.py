@@ -47,7 +47,8 @@ class Config(object):
     MAIL_USERNAME = ''
     MAIL_PASSWORD = ''
 
-    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', None)
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 
 
 class ProductionConfig(Config):
